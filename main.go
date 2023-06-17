@@ -3,7 +3,6 @@ package main
 import (
 	"a21hc3NpZ25tZW50/client"
 	"a21hc3NpZ25tZW50/db"
-	cfg "a21hc3NpZ25tZW50/config"
 	"a21hc3NpZ25tZW50/handler/api"
 	"a21hc3NpZ25tZW50/handler/web"
 	"a21hc3NpZ25tZW50/middleware"
@@ -19,6 +18,7 @@ import (
 	_ "embed"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 	"gorm.io/gorm"
 )
 
@@ -62,11 +62,12 @@ func main() {
 		router.Use(gin.Recovery())
 
 		dbCredential := model.Credential{
-			Host:         cfg.Config.DBHost,
-			Username:     cfg.Config.DBUsername,
-			Password:     cfg.Config.DBPassword,
-			DatabaseName: cfg.Config.DBName,
-			Port:         cfg.Config.DBPort,
+			Host:         "containers-us-west-133.railway.app",
+			Username:     "postgres",
+			Password:     "SEz4Fh61UMHubPvWH73T",
+			DatabaseName: "railway",
+			Port:         7382,
+			Schema:       "public",
 		}
 
 		conn, err := db.Connect(&dbCredential)
@@ -90,7 +91,7 @@ func main() {
 	wg.Wait()
 }
 
-func RunServer(db *gorm.DB, router *gin.Engine) *gin.Engine {
+func RunServer(db *gorm.DB, gin *gin.Engine) *gin.Engine {
 	userRepo := repo.NewUserRepo(db)
 	sessionRepo := repo.NewSessionsRepo(db)
 	categoryRepo := repo.NewCategoryRepo(db)
@@ -110,7 +111,7 @@ func RunServer(db *gorm.DB, router *gin.Engine) *gin.Engine {
 		TaskAPIHandler:     taskAPIHandler,
 	}
 
-	version := router.Group("/api/v1")
+	version := gin.Group("/api/v1")
 	{
 		user := version.Group("/user")
 		{
@@ -143,10 +144,10 @@ func RunServer(db *gorm.DB, router *gin.Engine) *gin.Engine {
 		}
 	}
 
-	return router
+	return gin
 }
 
-func RunClient(db *gorm.DB, router *gin.Engine, embedFS embed.FS) *gin.Engine {
+func RunClient(db *gorm.DB, gin *gin.Engine, embed embed.FS) *gin.Engine {
 	sessionRepo := repo.NewSessionsRepo(db)
 	sessionService := service.NewSessionService(sessionRepo)
 
@@ -154,27 +155,22 @@ func RunClient(db *gorm.DB, router *gin.Engine, embedFS embed.FS) *gin.Engine {
 	taskClient := client.NewTaskClient()
 	categoryClient := client.NewCategoryClient()
 
-	authWeb := web.NewAuthWeb(userClient, sessionService, embedFS)
-	modalWeb := web.NewModalWeb(embedFS)
-	homeWeb := web.NewHomeWeb(embedFS)
-	dashboardWeb := web.NewDashboardWeb(userClient, sessionService, embedFS)
-	taskWeb := web.NewTaskWeb(taskClient, sessionService, embedFS)
-	categoryWeb := web.NewCategoryWeb(categoryClient, sessionService, embedFS)
+	authWeb := web.NewAuthWeb(userClient, sessionService, embed)
+	modalWeb := web.NewModalWeb(embed)
+	homeWeb := web.NewHomeWeb(embed)
+	dashboardWeb := web.NewDashboardWeb(userClient, sessionService, embed)
+	taskWeb := web.NewTaskWeb(taskClient, sessionService, embed)
+	categoryWeb := web.NewCategoryWeb(categoryClient, sessionService, embed)
 
 	client := ClientHandler{
-		AuthWeb:      authWeb,
-		HomeWeb:      homeWeb,
-		DashboardWeb: dashboardWeb,
-		TaskWeb:      taskWeb,
-		CategoryWeb:  categoryWeb,
-		ModalWeb:     modalWeb,
+		authWeb, homeWeb, dashboardWeb, taskWeb, categoryWeb, modalWeb,
 	}
 
-	router.StaticFS("/static", http.Dir("frontend/public"))
+	gin.StaticFS("/static", http.Dir("frontend/public"))
 
-	router.GET("/", client.HomeWeb.Index)
+	gin.GET("/", client.HomeWeb.Index)
 
-	user := router.Group("/client")
+	user := gin.Group("/client")
 	{
 		user.GET("/login", client.AuthWeb.Login)
 		user.POST("/login/process", client.AuthWeb.LoginProcess)
@@ -185,19 +181,19 @@ func RunClient(db *gorm.DB, router *gin.Engine, embedFS embed.FS) *gin.Engine {
 		user.GET("/logout", client.AuthWeb.Logout)
 	}
 
-	main := router.Group("/client")
+	main := gin.Group("/client")
 	{
 		main.Use(middleware.Auth())
 		main.GET("/dashboard", client.DashboardWeb.Dashboard)
 		main.GET("/task", client.TaskWeb.TaskPage)
-		main.POST("/task/add/process", client.TaskWeb.TaskAddProcess)
+		user.POST("/task/add/process", client.TaskWeb.TaskAddProcess)
 		main.GET("/category", client.CategoryWeb.Category)
 	}
 
-	modal := router.Group("/client")
+	modal := gin.Group("/client")
 	{
 		modal.GET("/modal", client.ModalWeb.Modal)
 	}
 
-	return router
+	return gin
 }
