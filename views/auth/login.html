@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Login</title>
+</head>
+<body>
+    <!-- beginanswer -->
+    <div class="flex items-center justify-center min-h-screen bg-gray-100" style="background-image: url('https://images.unsplash.com/photo-1445112098124-3e76dd67983c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=867&q=80');">
+        <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+            <h3 class="text-3xl font-semibold text-center mb-6">Login to your account</h3>
+            <form method="POST" action="/client/login/process">
+                <div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2" for="email">Email</label>
+                        <input type="email" placeholder="Email" class="w-full px-4 py-2 text-gray-700 bg-gray-200 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600" name="email">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-bold mb-2" for="password">Password</label>
+                        <input type="password" placeholder="Password" class="w-full px-4 py-2 text-gray-700 bg-gray-200 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600" name="password">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="submit" class="w-full px-4 py-2 text-white bg-blue-500 hover:bg-blue-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">Login</button>
+                    </div>
+                </div>
+            </form>
+            <div class="mt-4 text-center">
+                <span class="text-gray-600">Don't have an account?</span>
+                <a href="/client/register" class="text-blue-500 hover:underline">Register</a>
+            </div>
+        </div>
+    </div>
+    <!-- endanswer -->
+</body>
+</html>

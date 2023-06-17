@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Register</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- beginanswer -->
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="w-full max-w-md px-6 py-8 mt-4 bg-white rounded-lg shadow-lg">
+            <h3 class="text-3xl font-bold text-center text-gray-800 mb-6">Register Account</h3>
+            <form method="POST" action="/client/register/process">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 font-bold" for="fullname">Fullname</label>
+                        <input type="text" placeholder="Fullname" class="w-full px-4 py-2 text-gray-700 bg-gray-200 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400" name="fullname">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold" for="email">Email</label>
+                        <input type="email" placeholder="Email" class="w-full px-4 py-2 text-gray-700 bg-gray-200 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400" name="email">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-bold" for="password">Password</label>
+                        <input type="password" placeholder="Password" class="w-full px-4 py-2 text-gray-700 bg-gray-200 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-400" name="password">
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <button type="submit" class="w-full px-4 py-2 text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-md hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-400">Register</button>
+                </div>
+                <div class="text-center mt-4">
+                    <span class="text-gray-300">Already have an account?</span>
+                    <a href="/client/login" class="ml-2 text-sm text-purple-600 hover:underline">Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- endanswer -->
+</body>
+</html>
